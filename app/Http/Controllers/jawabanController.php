@@ -2,90 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Jawaban;
-use App\Pertanyaan;
+use App\Models\JawabanModel;
 use Illuminate\Http\Request;
 
-class jawabanController extends Controller
+class JawabanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index($id)
-    {
-        $jawaban =  \App\Jawaban::FindOrfail($id);
-        return view('jawaban.detail', ['jawaban' =>  $jawaban]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create($id)
     {
-        return view('jawaban.create');
+        $jawaban  = JawabanModel::find_by_id($id);
+        return view('jawaban.create', compact('jawaban'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $jawaban =  new \App\Jawaban;
-        $jawaban->isi = $request->get('isi');
-        $jawaban->id_pertanyaan = $request->get('id');
-        $jawaban->save();
+        $new_pertanyaan = JawabanModel::save($request->all());
         return redirect()->route('index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function index()
     {
-        //
+        $jawaban = JawabanModel::get_all();
+        return view('jawaban.index', compact('jawaban'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $jawaban = JawabanModel::find_by_id_jawaban($id);
+        return view('jawaban.edit', compact('jawaban'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
-        //
+        $pertanyaan = JawabanModel::update($id, $request->all());
+        return redirect()->route('index');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+        $deleted =  JawabanModel::destroy($id);
+        return redirect()->route('index');
     }
 }
